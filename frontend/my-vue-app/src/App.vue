@@ -3,6 +3,7 @@
   import { RouterView } from 'vue-router';
   import LoginPage from './components/pages/Login.vue'
   import Navigation from './components/pages/Navigation.vue'
+  import Toast from './components/pages/Toast.vue';
 
   onMounted(() => {
     // Redirect to home after component mounts
@@ -14,7 +15,6 @@
 <template>
   <Navigation /><br />
   <RouterView />
-  <Footer />
-  <h1>hello world from 1st page</h1>
+  <Toast/>
 </template>
 
