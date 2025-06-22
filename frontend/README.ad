@@ -1,0 +1,7 @@
+front end using vue and connecting restapi using node and sqlite for database
+
+step 1: create project using vue using vite 
+    npm create vite@latest my-vue-app -- --template vue
+     choose vue and typscript 
+     then follow the given instruction
+     

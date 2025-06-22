@@ -1,0 +1,1 @@
+<template>this is text from login page</template>
