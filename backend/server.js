@@ -28,20 +28,21 @@ db.run(`
     username TEXT,
     password TEXT
   );
+`);
 
+// Create a simple "teacher" table
+db.run(`
   CREATE TABLE IF NOT EXISTS teacher (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    tname TEXT,
+    sname TEXT,
     dob TEXT,
-    tclass TEXT,
-    subject TEXT,
-    taddress TEXT,
-    phone TEXT,
+    sclass TEXT,
+    saddress TEXT,
+    g_phone TEXT,
     username TEXT,
     password TEXT
   );
 `);
-
 
 // Example API routes
 // '/' is default route so we say it home address/route
@@ -96,6 +97,83 @@ app.post('/api/add/teacher', (req, res) => {
       var message = 'Teacher registered successfully';
       res.json({ tname, dob, tclass, subject, taddress, phone, username, hash_password });
     });
+  });
+});
+
+
+
+// API: Get student by ID
+app.get('/api/get/student/:id', (req, res) => {
+  const studentId = req.params.id;
+  db.get('SELECT * FROM student WHERE id = ?', [studentId], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(404).json({ error: 'Student not found' });
+    res.json(row);
+  });
+});
+
+// API: Get teacher by ID
+app.get('/api/get/teacher/:id', (req, res) => {
+  const teacherId = req.params.id;
+  db.get('SELECT * FROM teacher WHERE id = ?', [teacherId], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(404).json({ error: 'Teacher not found' });
+    res.json(row);
+  });
+});
+
+// API: Update student
+app.put('/api/update/student/:id', (req, res) => {
+  const studentId = req.params.id;
+  const { sname, dob, sclass, saddress, g_phone, username, password } = req.body;
+
+  bcrypt.hash(password, 10, (err, hash_password) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to hash password' });
+    }
+    const query = `UPDATE student SET sname = ?, dob = ?, sclass = ?, saddress = ?, g_phone = ?, username = ?, password = ? WHERE id = ?`;
+    db.run(query, [sname, dob, sclass, saddress, g_phone, username, hash_password, studentId], function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      if (this.changes === 0) return res.status(404).json({ error: 'Student not found' });
+      res.json({ message: 'Student updated successfully' });
+    });
+  });
+});
+
+// API: Update teacher
+app.put('/api/update/teacher/:id', (req, res) => {
+  const teacherId = req.params.id;
+  const { tname, dob, tclass, subject, taddress, phone, username, password } = req.body;
+  bcrypt.hash(password, 10, (err, hash_password) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to hash password' });
+    }
+    const query = `UPDATE teacher SET tname = ?, dob = ?, tclass = ?, subject = ?, taddress = ?, phone = ?, username = ?, password = ? WHERE id = ?`;
+    db.run(query, [tname, dob, tclass, subject, taddress, phone, username, hash_password, teacherId], function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      if (this.changes === 0) return res.status(404).json({ error: 'Teacher not found' });
+      res.json({ message: 'Teacher updated successfully' });
+    });
+  });
+}); 
+
+// API: Delete student
+app.delete('/api/delete/student/:id', (req, res) => {
+  const studentId = req.params.id;
+  db.run('DELETE FROM student WHERE id = ?', [studentId], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    if (this.changes === 0) return res.status(404).json({ error: 'Student not found' });
+    res.json({ message: 'Student deleted successfully' });
+  });
+});
+
+// API: Delete teacher
+app.delete('/api/delete/teacher/:id', (req, res) => {
+  const teacherId = req.params.id;
+  db.run('DELETE FROM teacher WHERE id = ?', [teacherId], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    if (this.changes === 0) return res.status(404).json({ error: 'Teacher not found' });
+    res.json({ message: 'Teacher deleted successfully' });
   });
 });
 
