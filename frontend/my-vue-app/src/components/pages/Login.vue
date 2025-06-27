@@ -141,16 +141,16 @@ async function handleSubmit() {
     console.log('hello world');
     try {
       
-        console.log('login success1');
+        // console.log('login success1');
         const { data } = await axios.post(url, form.value)
-        console.log('login success');
+        console.log(data);
         toast.trigger(data.message || (isLogin.value ? 'Login successful' : 'Registered successfully'), 'success');
-        router.push('/dashboard');
+        router.push('/viewStudent'); // Redirect to viewStudent page after successful login/registration
         // console.log(data)
     } catch (err) {
         console.error(err)
-        console.log('login failed');
-        toast.trigger('Something went wrong', 'error')
+        // console.log('login failed');
+        toast.trigger('Something went wrong', 'error', 3000)
     }
 }
 </script>
